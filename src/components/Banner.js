@@ -7,7 +7,6 @@ import TrackVisibility from 'react-on-screen';
 
 
 export const Banner = () => {
-  const [index, setIndex] = useState(0)
   const [loopNum, setLoopNum] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [text, setText] = useState('');
@@ -43,9 +42,13 @@ export const Banner = () => {
   };
 
   useEffect(() => {
-     const ticker = setInterval(tick, delta);
-     return () => clearInterval(ticker);
-   }, [text, isDeleting, delta, loopNum]);
+     const tick = () => {
+    setIndex((prevIndex) => (prevIndex + 1) % 3);
+  };
+
+  const interval = setInterval(tick, 3000);
+  return () => clearInterval(interval);
+   }, []);
 
   
 
