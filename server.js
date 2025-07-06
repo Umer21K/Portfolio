@@ -1,10 +1,11 @@
+require('dotenv').config();               // if you test locally with a .env file
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;    // Azure will set PORT
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -14,32 +15,28 @@ app.get("/", (req, res) => res.send("👋 Server is up!"));
 app.post("/contact", async (req, res) => {
   const { firstName, lastName, email, phone, message } = req.body;
 
-  console.log("Received contact form data:", req.body);
-
   let transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
+    host: process.env.SMTP_HOST,          // e.g. smtp.gmail.com
+    port: +process.env.SMTP_PORT,         // e.g. 465
+    secure: process.env.SMTP_SECURE === "true",
     auth: {
-      user: "paki.user7017@gmail.com",
-      pass: "ucgonkqragoaisdy"
+      user: process.env.SMTP_USER,        // your Gmail address
+      pass: process.env.SMTP_PASS,        // your app‑password
     },
   });
 
-  const mailOptions = {
-    from: email,
-    to: "m.umernasir7017@gmail.com",
-    subject: `New Contact Form Submission from ${firstName} ${lastName}`,
-    text: `
-      Name: ${firstName} ${lastName}
-      Email: ${email}
-      Phone: ${phone}
-      Message: ${message}
-    `,
-  };
-
   try {
-    await transporter.sendMail(mailOptions);
+    await transporter.sendMail({
+      from: email,
+      to: process.env.CONTACT_RECEIVER,   // your notification address
+      subject: `New Contact Form from ${firstName} ${lastName}`,
+      text: `
+        Name: ${firstName} ${lastName}
+        Email: ${email}
+        Phone: ${phone}
+        Message: ${message}
+      `,
+    });
     res.status(200).json({ code: 200, message: "Email sent successfully" });
   } catch (error) {
     console.error("Error sending email:", error);
@@ -48,5 +45,5 @@ app.post("/contact", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
