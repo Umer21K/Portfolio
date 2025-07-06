@@ -7,6 +7,7 @@ import TrackVisibility from 'react-on-screen';
 
 
 export const Banner = () => {
+  const [index, setIndex] = useState(0);
   const [loopNum, setLoopNum] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [text, setText] = useState('');
