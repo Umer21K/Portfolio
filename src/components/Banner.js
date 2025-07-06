@@ -7,18 +7,13 @@ import TrackVisibility from 'react-on-screen';
 
 
 export const Banner = () => {
+  const [index, setIndex] = useState(0)
   const [loopNum, setLoopNum] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [text, setText] = useState('');
-  const [index, setIndex] = useState(1);
   const [delta, setDelta] = useState(300 - Math.random() * 100);
   const toRotate = [ "Web Developer", "App developer", "AI/ML Integrator" ];
   const period = 2000;
-
-  useEffect(() => {
-     const ticker = setInterval(tick, delta);
-     return () => clearInterval(ticker);
-   }, [delta, tick]);
 
   const tick = () => {
     let i = loopNum % toRotate.length;
@@ -46,6 +41,13 @@ export const Banner = () => {
       setIndex(prevIndex => prevIndex + 1);
     }
   };
+
+  useEffect(() => {
+     const ticker = setInterval(tick, delta);
+     return () => clearInterval(ticker);
+   }, [text, isDeleting, delta, loopNum]);
+
+  
 
   return (
     <section className="banner" id="home">
