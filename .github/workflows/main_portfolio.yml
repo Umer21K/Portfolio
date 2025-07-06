@@ -8,44 +8,36 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repo
+      - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Use Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
 
-      # 1) Client build
-      - name: Install & build React client
-        working-directory: client
+      - name: Install & build
         run: |
           npm ci
-          npm run build
+          npm run build        # this will run react-scripts build
+          npm run test --if-present
 
-      # 2) Server deps
-      - name: Install server dependencies
-        working-directory: server
-        run: npm ci
-
-      # 3) Prepare artifact
-      - name: Assemble dist folder
+      - name: Prepare artifact folder
         run: |
           rm -rf dist
           mkdir -p dist
-          # Copy server code
-          cp -r server dist/server
-          # Copy package files into server folder
-          cp server/package*.json dist/server/
-          # Move client build into server for static serving
-          mkdir -p dist/server/client
-          cp -r client/build/* dist/server/client
+          # Copy server.js, package files, node_modules for runtime
+          cp server.js package*.json dist/
+          cp -r node_modules dist/node_modules
+          # Copy React build output
+          cp -r build dist/client
 
-      # 4) Zip it up
-      - name: Zip release artifact
-        working-directory: dist/server
-        run: zip -r ../../release.zip .
+      - name: Zip artifact
+        run: |
+          cd dist
+          zip -r ../release.zip .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -56,13 +48,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
+
     steps:
-      - name: Download artifact
+      - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: node-app
 
-      - name: Unzip artifact
+      - name: Unzip
         run: unzip release.zip
 
       - name: Azure Login
@@ -75,6 +68,6 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}    # e.g. “Portfolio”
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           slot-name: Production
-          package: .                                   # unzipped dist/server here
+          package: .
