@@ -10,7 +10,14 @@ const PORT = process.env.PORT || 5000;    // Azure will set PORT
 app.use(cors());
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => res.send("👋 Server is up!"));
+const path = require("path");
+
+// Serve static files from the React build
+app.use(express.static(path.join(__dirname, "build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
 
 app.post("/contact", async (req, res) => {
   const { firstName, lastName, email, phone, message } = req.body;
