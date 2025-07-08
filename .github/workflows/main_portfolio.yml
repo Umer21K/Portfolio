@@ -21,18 +21,19 @@ jobs:
       - name: Install & build
         run: |
           npm ci
-          npm run build        # this will run react-scripts build
+          npm run build
           npm run test --if-present
 
       - name: Prepare artifact folder
         run: |
           rm -rf dist
           mkdir -p dist
-          # Copy server.js, package files, node_modules for runtime
+          # Copy server.js and package.json
           cp server.js package*.json dist/
+          # Copy node_modules
           cp -r node_modules dist/node_modules
-          # Copy React build output
-          cp -r build dist/client
+          # Copy React build output to correct location
+          cp -r build dist/build
 
       - name: Zip artifact
         run: |
