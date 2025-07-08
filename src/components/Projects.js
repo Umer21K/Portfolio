@@ -1,7 +1,7 @@
 import { Container, Row, Col, Tab } from "react-bootstrap";
 import { ProjectCard } from "./ProjectCard";
 import projImg1 from "../assets/img/project-img1.png";
-import projImg2 from "../assets/img/project-img2.png";
+import projImg2 from "../assets/img/fyp.mp4";
 import projImg3 from "../assets/img/project-img3.PNG";
 import colorSharp2 from "../assets/img/color-sharp2.png";
 import 'animate.css';
@@ -19,7 +19,8 @@ export const Projects = () => {
     {
       title: "Doctors Personal Healthcare Assistant",
       description: " Hospital Management Information System (HMIS) featuring an AI-powered Doctor Assistant.",
-      imgUrl: projImg2,
+      videoUrl: projImg2,
+      link: "#"
     },
     {
       title: "Cloud-Based Real-Time Chat Applications",
