@@ -31,7 +31,8 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "server-start": "node server.js"
   },
   "proxy": "http://localhost:5000",
   "eslintConfig": {
